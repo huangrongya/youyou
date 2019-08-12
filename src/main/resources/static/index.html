@@ -81,9 +81,9 @@
                 if (result.code === 200) {
                     let data_list = result.data;
                     console.log(data_list)
-                    let tb_content = `<tr class="tbTitle"><th>日期</th><th>uuid</th><th>应用号</th><th>方法号</th><th>态势码</th><th>状态</th><th>内容</th><th>总数</th><th>金额</th></tr>`;
+                    let tb_content = `<tr class="tbTitle"><th>日期</th><th>应用号</th><th>方法号</th><th>态势码</th><th>状态</th><th>投注内容</th><th>投注量</th><th>金额</th></tr>`;
                     for (const i in data_list) {
-                        tb_content+=`<tr class="tbContext"><td>`+data_list[i].date+`</td><td>`+data_list[i].uuid+`</td><td>`+data_list[i].appNo+`</td><td>`+data_list[i].funNo+`</td><td>`+data_list[i].code+`</td><td>`+data_list[i].status+`</td><td>`+data_list[i].content+`</td><td>`+data_list[i].sum+`</td><td>`+data_list[i].money+`</td></tr>`;
+                        tb_content+=`<tr class="tbContext"><td>`+data_list[i].date+`</td><td>`+data_list[i].appNo+`</td><td>`+data_list[i].funNo+`</td><td>`+data_list[i].code+`</td><td>`+data_list[i].status+`</td><td>`+data_list[i].content+`</td><td>`+data_list[i].sum+`</td><td>`+data_list[i].money+`</td></tr>`;
                     }
                     $("#data_table").html(tb_content);
                 }else {
