@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youyou.web.dao.mapper.DataMapper">
+  <resultMap id="BaseResultMap" type="com.youyou.web.dao.model.Data">
+    <id column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+    <result column="app_no" jdbcType="INTEGER" property="appNo" />
+    <result column="fun_no" jdbcType="INTEGER" property="funNo" />
+    <result column="code" jdbcType="INTEGER" property="code" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="sum" jdbcType="INTEGER" property="sum" />
+    <result column="money" jdbcType="DOUBLE" property="money" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uuid, `date`, app_no, fun_no, code, `status`, content, `sum`, money, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from data
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from data
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="uuid" keyProperty="uuid" parameterType="com.youyou.web.dao.model.Data" useGeneratedKeys="true">
+    insert into data (`date`, app_no, fun_no, 
+      code, `status`, content, 
+      `sum`, money, create_time
+      )
+    values (#{date,jdbcType=VARCHAR}, #{appNo,jdbcType=INTEGER}, #{funNo,jdbcType=INTEGER}, 
+      #{code,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{sum,jdbcType=INTEGER}, #{money,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="uuid" keyProperty="uuid" parameterType="com.youyou.web.dao.model.Data" useGeneratedKeys="true">
+    insert into data
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="date != null">
+        `date`,
+      </if>
+      <if test="appNo != null">
+        app_no,
+      </if>
+      <if test="funNo != null">
+        fun_no,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="sum != null">
+        `sum`,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="date != null">
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="appNo != null">
+        #{appNo,jdbcType=INTEGER},
+      </if>
+      <if test="funNo != null">
+        #{funNo,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sum != null">
+        #{sum,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.youyou.web.dao.model.Data">
+    update data
+    <set>
+      <if test="date != null">
+        `date` = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="appNo != null">
+        app_no = #{appNo,jdbcType=INTEGER},
+      </if>
+      <if test="funNo != null">
+        fun_no = #{funNo,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sum != null">
+        `sum` = #{sum,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.youyou.web.dao.model.Data">
+    update data
+    set `date` = #{date,jdbcType=VARCHAR},
+      app_no = #{appNo,jdbcType=INTEGER},
+      fun_no = #{funNo,jdbcType=INTEGER},
+      code = #{code,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      `sum` = #{sum,jdbcType=INTEGER},
+      money = #{money,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+
+  <select id="queryLatestByFuncNo" resultMap="BaseResultMap">
+    SELECT
+        a.uuid, a.`date`, a.app_no, a.fun_no, a.code, a.`status`, a.content, a.`sum`, a.money, a.create_time
+    FROM
+        `data` a
+    RIGHT JOIN (
+        SELECT
+            MAX(b.create_time) btime
+        FROM
+            `data` b
+        GROUP BY
+            b.fun_no
+    ) c ON a.create_time = c.btime
+    WHERE
+        a.`status` > 0
+    GROUP BY
+        a.uuid
+    ORDER BY
+        a.create_time DESC,
+        a.app_no,
+        a.fun_no
+  </select>
+</mapper>
