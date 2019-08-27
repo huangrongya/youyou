@@ -146,19 +146,30 @@
 
   <select id="queryLatestByFuncNo" resultMap="BaseResultMap">
     SELECT
-        a.uuid, a.`date`, a.app_no, a.fun_no, a.code, a.`status`, a.content, a.`sum`, a.money, a.create_time
+        a.uuid,
+        a.`date`,
+        a.app_no,
+        a.fun_no,
+        a.`code`,
+        a.`status`,
+        a.content,
+        a.`sum`,
+        a.money,
+        a.update_time
     FROM
         `data` a
     RIGHT JOIN (
         SELECT
-            MAX(b.create_time) btime
+            MAX(b.update_time) btime
         FROM
             `data` b
         GROUP BY
-            b.fun_no
-    ) c ON a.create_time = c.btime
+            b.app_no
+    ) c ON a.update_time = c.btime
     WHERE
-        a.`status` > 0 and a.create_time >= DATE_SUB(NOW(),INTERVAL 1 MINUTE)
+        a.`status` > 0
+    AND a.update_time >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+    AND MINUTE (a.update_time) = MINUTE (NOW())
     GROUP BY
         a.uuid
     ORDER BY
