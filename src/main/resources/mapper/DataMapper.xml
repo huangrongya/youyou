@@ -12,12 +12,14 @@
     <result column="sum" jdbcType="INTEGER" property="sum" />
     <result column="money" jdbcType="DOUBLE" property="money" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    uuid, `date`, app_no, fun_no, code, `status`, content, `sum`, money, create_time
+    uuid, `date`, app_no, fun_no, code, `status`, content, `sum`, money, create_time,
+    update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from data
     where uuid = #{uuid,jdbcType=VARCHAR}
@@ -27,14 +29,14 @@
     where uuid = #{uuid,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="uuid" keyProperty="uuid" parameterType="com.youyou.web.dao.model.Data" useGeneratedKeys="true">
-    insert into data (`date`, app_no, fun_no, 
-      code, `status`, content, 
-      `sum`, money, create_time
-      )
-    values (#{date,jdbcType=VARCHAR}, #{appNo,jdbcType=INTEGER}, #{funNo,jdbcType=INTEGER}, 
-      #{code,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
-      #{sum,jdbcType=INTEGER}, #{money,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}
-      )
+    insert into data (`date`, app_no, fun_no,
+      code, `status`, content,
+      `sum`, money, create_time,
+      update_time)
+    values (#{date,jdbcType=VARCHAR}, #{appNo,jdbcType=INTEGER}, #{funNo,jdbcType=INTEGER},
+      #{code,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},
+      #{sum,jdbcType=INTEGER}, #{money,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="uuid" keyProperty="uuid" parameterType="com.youyou.web.dao.model.Data" useGeneratedKeys="true">
     insert into data
@@ -66,6 +68,9 @@
       <if test="createTime != null">
         create_time,
       </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="date != null">
@@ -94,6 +99,9 @@
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -127,6 +135,9 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where uuid = #{uuid,jdbcType=VARCHAR}
   </update>
@@ -140,7 +151,8 @@
       content = #{content,jdbcType=VARCHAR},
       `sum` = #{sum,jdbcType=INTEGER},
       money = #{money,jdbcType=DOUBLE},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where uuid = #{uuid,jdbcType=VARCHAR}
   </update>
 
@@ -168,13 +180,18 @@
     ) c ON a.update_time = c.btime
     WHERE
         a.`status` > 0
-    AND a.update_time >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
-    AND MINUTE (a.update_time) = MINUTE (NOW())
+--     AND a.update_time >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+    AND YEAR (a.update_time) = YEAR (NOW())
+    AND MONTH (a.update_time) = MONTH (NOW())
+    AND DAY (a.update_time) = DAY (NOW())
+--     AND HOUR (a.update_time) = HOUR (NOW())
+--     AND MINUTE (a.update_time) = MINUTE (NOW())
     GROUP BY
         a.uuid
     ORDER BY
         a.create_time DESC,
         a.app_no,
         a.fun_no
+    limit 20
   </select>
 </mapper>

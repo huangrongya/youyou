@@ -29,4 +29,8 @@ public class Data implements Serializable {
 
     private Date createTime;
 
+    private Date updateTime;
+
+    private static final long serialVersionUID = 1L;
+
 }
